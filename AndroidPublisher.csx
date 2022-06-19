@@ -109,14 +109,11 @@ async Task<Apk> UploadApkAsync()
     var upload = service.Edits.Apks.Upload(packageName, edit.Id, stream, "application/octet-stream");
     var uploadProgress = await upload.UploadAsync();
 
-    switch (uploadProgress.Status)
+    return uploadProgress.Status switch
     {
-        case UploadStatus.Completed:
-            return upload.ResponseBody;
-
-        default:
-            throw new Exception("upload failed"); 
-    }
+        UploadStatus.Completed => upload.ResponseBody,
+        _ => throw new Exception("upload failed")
+    };
 }
         
 async Task<ExpansionFile> UploadObbAsync()
@@ -132,12 +129,9 @@ async Task<ExpansionFile> UploadObbAsync()
         "application/octet-stream");
     var uploadProgress = await upload.UploadAsync();
     
-    switch (uploadProgress.Status)
+    return uploadProgress.Status switch
     {
-        case UploadStatus.Completed:
-            return upload.ResponseBody.ExpansionFile;
-
-        default:
-            throw new Exception("upload failed"); 
-    }
+        UploadStatus.Completed => upload.ResponseBody.ExpansionFile,
+        _ => throw new Exception("upload failed")
+    };
 }
